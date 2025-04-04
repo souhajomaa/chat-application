@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Conversation;
 use App\Entity\Participant;
-use App\Entity\User;  // Ajoute cette ligne
+use App\Entity\User;  
 use App\Repository\ConversationRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,8 +30,8 @@ final class ConversationController extends AbstractController
         $this->conversationRepository = $conversationRepository;
     }
 
-    #[Route('/conversation/{id}', name: 'app_conversation', methods: ['GET'])]
-    public function index(Request $request, int $id): Response
+    #[Route('/', name: 'newConversation', methods: ['POST'])]
+    public function index(Request $request): Response
     {
         // Récupérer l'utilisateur connecté
         $currentUser = $this->getUser();
@@ -40,7 +40,8 @@ final class ConversationController extends AbstractController
         }
 
         // Récupérer l'autre utilisateur
-        $otherUser = $this->userRepository->find($id);
+        $otherUser=$request->get('otherUser',0);
+        $otherUser = $this->userRepository->find($otherUser);
         if (!$otherUser instanceof User) {
             throw new Exception("L'utilisateur n'a pas été trouvé.");
         }
@@ -89,5 +90,22 @@ final class ConversationController extends AbstractController
         return $this->json([
             'id' => $conversation->getId()
         ], Response::HTTP_CREATED,[],[]);
+    }
+    #[Route('/', name: 'getConversations', methods: ['GET'])]
+
+    public function getConversations(): Response
+    {
+        // Récupérer l'utilisateur connecté
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User) {
+            throw new Exception("Utilisateur non authentifié.");
+        }
+
+        // Récupérer toutes les conversations de l'utilisateur
+        $conversations = $this->conversationRepository->findBy(['participants' => $currentUser]);
+
+        return $this->json($conversations, Response::HTTP_OK, [], [
+            'groups' => ['conversation:read']
+        ]);
     }
 }
