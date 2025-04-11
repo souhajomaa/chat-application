@@ -92,20 +92,20 @@ final class ConversationController extends AbstractController
         ], Response::HTTP_CREATED,[],[]);
     }
     #[Route('/', name: 'getConversations', methods: ['GET'])]
-
-    public function getConversations(): Response
-    {
-        // Récupérer l'utilisateur connecté
-        $currentUser = $this->getUser();
-        if (!$currentUser instanceof User) {
-            throw new Exception("Utilisateur non authentifié.");
-        }
-
-        // Récupérer toutes les conversations de l'utilisateur
-        $conversations = $this->conversationRepository->findBy(['participants' => $currentUser]);
-
-        return $this->json($conversations, Response::HTTP_OK, [], [
-            'groups' => ['conversation:read']
-        ]);
+public function getConversations(): Response
+{
+    $currentUser = $this->getUser();
+    
+    if (!$currentUser instanceof User) {
+        throw new Exception("Utilisateur non authentifié.");
     }
+
+    // Récupérer toutes les conversations de l'utilisateur
+    $conversations = $this->conversationRepository->findConversationsByUser($currentUser->getId());
+
+    return $this->json($conversations, Response::HTTP_OK, [], [
+        'groups' => ['conversation:read']
+    ]);
+}
+
 }
