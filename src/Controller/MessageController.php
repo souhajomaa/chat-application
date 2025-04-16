@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class MessageController extends AbstractController
 {
+    #[Route('/{id}', name: 'getMessages')]
+
     public function index(): Response
     {
         return $this->render('message/index.html.twig', [
