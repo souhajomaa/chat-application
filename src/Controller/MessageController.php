@@ -10,12 +10,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MessageController extends AbstractController
 {
-    #[Route('/{id}', name: 'message.getMessages')]
+    #[Route('/messages/{id}', name: 'getMessages')]
     public function index(Request $request, Conversation $conversation): Response
+    
     {
         $this->denyAccessUnlessGranted('view', $conversation);
 
-        return $this->render('message/index.html.twig', [
+        return $this->render('message/index.html.twig', parameters: [
             'controller_name' => 'MessageController',
             'conversation' => $conversation,
         ]);

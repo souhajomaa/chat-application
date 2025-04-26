@@ -102,7 +102,11 @@ public function getConversations(): Response
 
     // Récupérer toutes les conversations de l'utilisateur
     $conversations = $this->conversationRepository->findConversationsByUser($currentUser->getId());
-    //dd($conversations);
+    foreach ($conversations as $data) {
+        echo $data['username']; 
+    }
+    
+    dd($conversations);
 
    return $this->json($conversations, Response::HTTP_OK, [], [
         'groups' => ['conversation:read']]);

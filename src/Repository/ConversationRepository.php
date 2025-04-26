@@ -5,12 +5,8 @@ namespace App\Repository;
 use App\Entity\Conversation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Conversation>
- */
 class ConversationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -18,43 +14,29 @@ class ConversationRepository extends ServiceEntityRepository
         parent::__construct($registry, Conversation::class);
     }
 
-    //    /**
-    //     * @return Conversation[] Returns an array of Conversation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Conversation
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
     public function findConversationByParticipants(int $otherUserId, int $myId): ?Conversation
     {
         $qb = $this->createQueryBuilder('c');
         
         $qb->innerJoin('c.participants', 'p')
-        ->where('p.user IN (:users)')
-        ->groupBy('c.id')
-        ->having('COUNT(p.user) = 2')
-        ->setParameter('users', [$myId, $otherUserId]);
+            ->where('p.user IN (:users)')
+            ->groupBy('c.id')
+            ->having('COUNT(p.user) = 2')
+            ->setParameter('users', value: [$myId, $otherUserId]);
     
-        return $qb->getQuery()->getOneOrNullResult(); // Retourne une conversation ou null
+        return $qb->getQuery()->getOneOrNullResult();
     }
-    public function findConversationsByUser(int $userId)
+    /**
+ * @return array<int, array{
+ *     conversationId: int,
+ *     userId: int,
+ *     username: string,
+ *     content: string|null,
+ *     createdAt: \DateTimeInterface|null
+ * }>
+ */
+public function findConversationsByUser(int $userId): array
+
     {
         $qb = $this->createQueryBuilder('c');
     
@@ -68,4 +50,19 @@ class ConversationRepository extends ServiceEntityRepository
     
         return $qb->getQuery()->getResult();
     }
+    
+
+    public function checkIfUserIsParticipant(Conversation $conversation, int $userId): bool
+{
+    $qb = $this->createQueryBuilder('c');
+    $qb
+        ->innerJoin('c.participants', 'p')
+        ->where('c.id = :conversationId')
+        ->andWhere($qb->expr()->eq('p.user', ':userId'))
+        ->setParameter('conversationId', $conversation->getId())
+        ->setParameter('userId', $userId);
+        
+    return $qb->getQuery()->getOneOrNullResult() !== null;
+}
+
 }

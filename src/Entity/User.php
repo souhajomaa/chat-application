@@ -18,6 +18,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column(type:"integer")]
     private ?int $id = null;
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     #[ORM\Column(type:"string", length: 180, unique: true)]
     private ?string $username = null;
@@ -43,10 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->messages = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
+  
 
     public function getUsername(): ?string
     {
