@@ -16,7 +16,7 @@ class Conversation
     private ?int $id = null;
 
     #[ORM\OneToOne(targetEntity: Message::class)]
-    #[ORM\JoinColumn(name: "last_message_id", referencedColumnName: "id", nullable: true)]
+    #[ORM\JoinColumn(name: "last_message_id", referencedColumnName: "id", nullable: true, onDelete: "SET NULL")]
     private ?Message $lastMessage = null;
 
     #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: "conversation", cascade: ["persist", "remove"])]

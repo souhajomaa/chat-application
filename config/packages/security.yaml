@@ -18,10 +18,12 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\AppAuthenticator
+            json_login:
+                check_path: app_login
+            access_denied_handler: App\Security\AccessDeniedHandler
+            entry_point: App\Security\AuthenticationEntryPoint
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
 
             remember_me:
                 secret: '%kernel.secret%'
@@ -40,8 +42,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-          - { path: ^/login, roles: PUBLIC_ACCESS }
-          - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+           - { path: ^/login, roles: PUBLIC_ACCESS }
+           - { path: ^/messages, roles: IS_AUTHENTICATED_FULLY }
+           - { path: ^/conversations, roles: IS_AUTHENTICATED_FULLY }
+           - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+
 
 
 when@test:

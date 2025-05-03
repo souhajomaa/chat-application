@@ -7,12 +7,15 @@ use App\Entity\Participant;
 use App\Entity\User;  
 use App\Repository\ConversationRepository;
 use App\Repository\UserRepository;
+use Symfony\Component\WebLink\Link;
+use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Exception;
+#[Route('/conversations', name: 'conversations')]
+
 
 final class ConversationController extends AbstractController
 {
@@ -30,7 +33,7 @@ final class ConversationController extends AbstractController
         $this->conversationRepository = $conversationRepository;
     }
 
-    #[Route('/', name: 'newConversation', methods: ['POST'])]
+    #[Route('/', name: 'newConversations', methods: ['POST'])]
     public function index(Request $request): Response
     {
         // Récupérer l'utilisateur connecté
@@ -91,8 +94,9 @@ final class ConversationController extends AbstractController
             'id' => $conversation->getId()
         ], Response::HTTP_CREATED,[],[]);
     }
-    #[Route('/', name: 'getConversations', methods: ['GET'])]
-public function getConversations(): Response
+    #[Route('/conversations', name: 'getConversations', methods: ['GET'])]
+    public function getConversations(Request $request): Response
+
 {
     $currentUser = $this->getUser();
     
@@ -106,10 +110,11 @@ public function getConversations(): Response
         echo $data['username']; 
     }
     
-    dd($conversations);
+    $hubUrl = $this->getParameter('mercure.default_hub');
 
-   return $this->json($conversations, Response::HTTP_OK, [], [
-        'groups' => ['conversation:read']]);
+    $this->addLink($request, new Link('mercure',$hubUrl));
+
+    return $this->json($conversations);
 }
 
 }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeImmutable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 class Message
@@ -11,6 +12,7 @@ class Message
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
+    #[Groups(['id'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Conversation::class, inversedBy: "messages")]
@@ -19,13 +21,19 @@ class Message
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "messages")]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['user'])]
     private ?User $user = null;
 
-    #[ORM\Column(type: "text")] // content en LONGTEXT
+    #[ORM\Column(type: "text")]
+    #[Groups(['content'])]
     private ?string $content = null;
 
     #[ORM\Column(type: "datetime_immutable")]
+    #[Groups(['createdAt'])]
     private ?DateTimeImmutable $createdAt = null;
+
+    #[Groups(['mine'])]
+    private bool $mine = false;
 
     public function __construct()
     {
@@ -73,5 +81,16 @@ class Message
     public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    public function isMine(): bool
+    {
+        return $this->mine;
+    }
+
+    public function setMine(bool $mine): static
+    {
+        $this->mine = $mine;
+        return $this;
     }
 }

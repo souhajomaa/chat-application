@@ -1,23 +1,29 @@
 #!/usr/bin/env php
 <?php
 
+// Force le fuseau horaire si non défini
 if (!ini_get('date.timezone')) {
     ini_set('date.timezone', 'UTC');
 }
 
-if (is_file(dirname(__DIR__).'/vendor/phpunit/phpunit/phpunit')) {
+$baseDir = dirname(__DIR__);
+$phpunitPath = $baseDir . '/vendor/phpunit/phpunit/phpunit';
+$simplePhpunitPath = $baseDir . '/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php';
+$autoloadPath = $baseDir . '/vendor/autoload.php';
+
+if (is_file($phpunitPath)) {
+    // Pour PHP 8.0 et plus, on utilise directement PHPUnit
     if (PHP_VERSION_ID >= 80000) {
-        require dirname(__DIR__).'/vendor/phpunit/phpunit/phpunit';
+        require $phpunitPath;
     } else {
-        define('PHPUNIT_COMPOSER_INSTALL', dirname(__DIR__).'/vendor/autoload.php');
-        require PHPUNIT_COMPOSER_INSTALL;
+        // Pour les versions de PHP < 8.0
+        define('PHPUNIT_COMPOSER_INSTALL', $autoloadPath);
+        require $autoloadPath;
         PHPUnit\TextUI\Command::main();
     }
+} elseif (is_file($simplePhpunitPath)) {
+    require $simplePhpunitPath;
 } else {
-    if (!is_file(dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php')) {
-        echo "Unable to find the `simple-phpunit.php` script in `vendor/symfony/phpunit-bridge/bin/`.\n";
-        exit(1);
-    }
-
-    require dirname(__DIR__).'/vendor/symfony/phpunit-bridge/bin/simple-phpunit.php';
+    echo " Impossible de trouver `simple-phpunit.php` dans `vendor/symfony/phpunit-bridge/bin/`.\n";
+    exit(1);
 }

@@ -1,0 +1,20 @@
+# Symfony standard
+/vendor/
+.env
+.env.local
+.env.*.local
+/config/secrets/dev/
+/config/secrets/test/
+
+/mercure.yaml
+/mercure.yaml.local
+/dev.Caddyfile
+/dev_chatapp.Caddyfile
+
+/node_modules/
+public/bundles/
+/var/
+/bin/        # sauf si tu veux garder certains scripts utiles
+/.idea/      # si tu utilises PhpStorm ou Webstorm
+/*.log
+/.DS_Store

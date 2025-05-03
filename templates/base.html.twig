@@ -12,6 +12,8 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% block body %}
+        <body data-username="{{ app.user.username|e('html_attr') }}">
+{% endblock %}
     </body>
 </html>

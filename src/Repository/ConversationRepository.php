@@ -62,7 +62,7 @@ public function findConversationsByUser(int $userId): array
         ->setParameter('conversationId', $conversation->getId())
         ->setParameter('userId', $userId);
         
-    return $qb->getQuery()->getOneOrNullResult() !== null;
+    return $qb->getQuery()->getOneOrNullResult() ;
 }
 
 }

@@ -40,4 +40,14 @@ class ParticipantRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findParticipantByConversationIdAndUserId(int $conversationId, int $userId): ?Participant
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.conversation = :conversationId')
+            ->andWhere('p.user = :userId')
+            ->setParameter('conversationId', $conversationId)
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

@@ -1,20 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MessagerieController!{% endblock %}
+{% block title %}Messagerie{% endblock %}
+
+{% block stylesheets %}
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/chat.css') }}">
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div id="app" data-username="{{ app.user.userIdentifier }}" class="chat-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h1>Connect Sphere</h1>
+        </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <input type="text" id="searchField" placeholder="🔍 Search users..." class="search-field" />
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>D:/symphony_workspace/chatapp/src/Controller/MessagerieController.php</code></li>
-        <li>Your template at <code>D:/symphony_workspace/chatapp/templates/messagerie/index.html.twig</code></li>
-    </ul>
+        <label class="header-label">Contacts</label>
+        <div class="messages-box">
+            <div class="list-group rounded-0" id="conversationList">
+                {# Les conversations seront insérées ici dynamiquement #}
+            </div>
+        </div>
+
+        <ul>
+            <li><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fas fa-calendar-alt"></i> Events</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Group</a></li>
+            <li><a href="#"><i class="fas fa-briefcase"></i> Job Feed</a></li>
+            <li><a href="#"><i class="fas fa-plus-circle"></i> Create Job</a></li>
+            <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="#"><i class="fas fa-share-alt"></i> Social</a></li>
+            <li><a href="#"><i class="fas fa-robot"></i> AI Assistant</a></li>
+            <li><a href="#"><i class="fas fa-star"></i> Points</a></li>
+            <li><a href="#"><i class="fas fa-sign-out-alt"></i> Log out</a></li>
+        </ul>
+
+        <div class="status-bar">
+            <span>Status:</span>
+            <span id="connectionStatusLabel" class="status disconnected">Disconnected</span>
+        </div>
+    </div>
+
+    <!-- Zone principale de discussion -->
+    <div class="chat-area">
+        <div class="chat-header">
+            <h3 id="selectedUserLabel">Select a user to start chatting</h3>
+        </div>
+
+        <div class="messages-container" id="chatBox">
+            {# Messages chargés dynamiquement ici #}
+        </div>
+
+        <div class="message-input-container">
+            <input type="text" id="messageField" placeholder="Type your message..." />
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/userStore.js') }}"></script>
+    <script src="{{ asset('js/conversationStore.js') }}"></script>
+    <script src="{{ asset('js/conversationActions.js') }}"></script>
+    <script src="{{ asset('js/messagerie.js') }}"></script>
 {% endblock %}
